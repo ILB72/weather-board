@@ -8,66 +8,66 @@
   :root { --ok:#1a7f37; --warn:#b26a00; --fail:#c62828; --stale:#8a6d00; --muted:#666; --line:#e5e7eb; }
   * { box-sizing: border-box; }
   body { font-family: -apple-system, "Segoe UI", "Malgun Gothic", sans-serif;
-         max-width: 760px; margin: 0 auto; padding: 0 18px 60px; color:#111; line-height:1.55; background:#fafafa; }
-  header { padding: 28px 0 8px; }
-  h1 { font-size: 1.25rem; margin: 0 0 4px; font-weight: 700; }
-  .sub { color: var(--muted); font-size: .88rem; }
-  .hero { background:#fff; border:1px solid var(--line); border-radius:14px; padding:22px 22px 18px; margin:18px 0; }
+         max-width: 720px; margin: 0 auto; padding: 0 18px 50px; color:#111; line-height:1.55; background:#fafafa; }
+  header { padding: 26px 0 6px; }
+  h1 { font-size: 1.2rem; margin: 0 0 4px; font-weight: 700; }
+  .sub { color: var(--muted); font-size: .85rem; }
+  .hero { background:#fff; border:1px solid var(--line); border-radius:14px; padding:20px 22px 16px; margin:16px 0; }
   .hero-top { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
-  .big { font-size: 3.2rem; font-weight: 800; letter-spacing:-1px; }
-  .unit { font-size: 1.4rem; font-weight: 500; color: var(--muted); }
-  .badge { display:inline-block; padding:3px 10px; border-radius:999px; font-size:.78rem; font-weight:700; margin-left:auto; }
+  .big { font-size: 3rem; font-weight: 800; letter-spacing:-1px; }
+  .unit { font-size: 1.3rem; font-weight: 500; color: var(--muted); }
+  .weather { font-size: 1rem; color:#333; margin-left:2px; }
+  .badge { display:inline-block; padding:3px 10px; border-radius:999px; font-size:.76rem; font-weight:700; margin-left:auto; }
   .badge.ok { background:#e7f5ec; color:var(--ok); }
   .badge.stale { background:#fff8e1; color:var(--stale); }
-  .badge.fail { background:#fdecea; color:var(--fail); }
-  .hero-meta { display:flex; flex-wrap:wrap; gap:6px 22px; margin-top:14px; font-size:.86rem; color:var(--muted); }
+  .hero-meta { display:flex; flex-wrap:wrap; gap:6px 20px; margin-top:12px; font-size:.84rem; color:var(--muted); }
   .hero-meta b { color:#111; font-weight:600; }
-  .note { font-size:.82rem; color:var(--muted); margin-top:10px; }
-  section { background:#fff; border:1px solid var(--line); border-radius:14px; padding:20px 22px; margin:16px 0; }
-  h2 { font-size:1rem; margin:0 0 12px; font-weight:700; }
-  .row { display:flex; justify-content:space-between; gap:14px; padding:7px 0; border-bottom:1px dashed var(--line); font-size:.9rem; }
+  .note { font-size:.8rem; color:var(--muted); margin-top:8px; }
+  section { background:#fff; border:1px solid var(--line); border-radius:14px; padding:18px 20px; margin:14px 0; }
+  h2 { font-size:.95rem; margin:0 0 10px; font-weight:700; }
+  .row { display:flex; justify-content:space-between; gap:14px; padding:6px 0; border-bottom:1px dashed var(--line); font-size:.88rem; }
   .row:last-child { border-bottom:none; }
   .row .k { color:var(--muted); }
   .row .v { font-weight:600; text-align:right; word-break:break-all; }
-  .mono { font-family: ui-monospace, Consolas, monospace; font-size:.8rem; }
-  table { width:100%; border-collapse:collapse; font-size:.84rem; }
-  th, td { border-bottom:1px solid var(--line); padding:8px 4px; text-align:left; }
-  th { color:var(--muted); font-weight:600; font-size:.8rem; }
-  .tag { display:inline-block; padding:1px 8px; border-radius:6px; font-size:.72rem; font-weight:700; }
+  .mono { font-family: ui-monospace, Consolas, monospace; font-size:.78rem; }
+  table { width:100%; border-collapse:collapse; font-size:.82rem; }
+  th, td { border-bottom:1px solid var(--line); padding:7px 4px; text-align:left; }
+  th { color:var(--muted); font-weight:600; font-size:.78rem; }
+  .tag { display:inline-block; padding:1px 8px; border-radius:6px; font-size:.7rem; font-weight:700; }
   .tag.ok { background:#e7f5ec; color:var(--ok); }
   .tag.stale { background:#fff8e1; color:var(--stale); }
-  .delta { font-size:1.6rem; font-weight:800; }
-  .delta small { font-size:.85rem; font-weight:500; color:var(--muted); }
-  .empty { color:var(--muted); font-size:.86rem; }
-  details.review { background:#fff; border:1px solid var(--line); border-radius:14px; padding:0; margin:16px 0; overflow:hidden; }
-  details.review > summary { cursor:pointer; padding:16px 22px; font-weight:700; font-size:.92rem; list-style:none; display:flex; justify-content:space-between; align-items:center; }
-  details.review > summary::-webkit-details-marker { display:none; }
-  details.review > summary::after { content:"펼치기 ▾"; font-weight:500; color:var(--muted); font-size:.8rem; }
-  details.review[open] > summary::after { content:"접기 ▴"; }
-  details.review .inner { padding: 0 22px 22px; border-top:1px solid var(--line); }
-  details.review h3 { font-size:.9rem; margin:18px 0 8px; font-weight:700; }
-  .btns { display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
-  button { padding:8px 11px; border:1px solid #ccc; background:#fff; border-radius:8px; cursor:pointer; font-size:.82rem; }
+  .delta { font-size:1.5rem; font-weight:800; }
+  .delta small { font-size:.82rem; font-weight:500; color:var(--muted); }
+  .empty { color:var(--muted); font-size:.84rem; }
+  details.test { background:#fff; border:1px solid var(--line); border-radius:12px; margin:14px 0; overflow:hidden; }
+  details.test > summary { cursor:pointer; padding:12px 18px; font-weight:600; font-size:.85rem; color:var(--muted); list-style:none; display:flex; justify-content:space-between; align-items:center; }
+  details.test > summary::-webkit-details-marker { display:none; }
+  details.test > summary::after { content:"▾"; font-size:.8rem; }
+  details.test[open] > summary::after { content:"▴"; }
+  details.test .inner { padding: 0 18px 16px; border-top:1px solid var(--line); }
+  details.test h3 { font-size:.82rem; margin:14px 0 6px; font-weight:700; color:#333; }
+  .btns { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
+  button { padding:6px 10px; border:1px solid #ccc; background:#fff; border-radius:7px; cursor:pointer; font-size:.78rem; }
   button:hover { background:#f5f5f5; }
   button.recover { background:#1a7f37; color:#fff; border-color:#1a7f37; }
   button.danger { background:#c62828; color:#fff; border-color:#c62828; }
-  .small { font-size:.8rem; color:var(--muted); }
-  .notice { background:#eef4ff; border:1px solid #c9d9ff; color:#1a3d8f; padding:10px 14px; border-radius:10px; font-size:.83rem; margin:10px 0; }
-  footer { text-align:center; color:var(--muted); font-size:.78rem; margin-top:24px; }
+  .small { font-size:.78rem; color:var(--muted); }
+  footer { text-align:center; color:var(--muted); font-size:.75rem; margin-top:20px; }
 </style>
 </head>
 <body>
 
 <header>
   <h1>대전 실시간 기온</h1>
-  <div class="sub">Open-Meteo 공개 데이터 · 기준 시간대 Asia/Seoul (KST) · API 키 없음</div>
+  <div class="sub">Open-Meteo 공개 데이터 · 기준 시간대 Asia/Seoul (KST)</div>
 </header>
 
-<!-- ===== 히어로: 지금 값 ===== -->
+<!-- 히어로 -->
 <section class="hero">
   <div class="hero-top">
     <span id="tempValue" class="big">—</span>
     <span id="unitLabel" class="unit"></span>
+    <span id="weatherLabel" class="weather"></span>
     <span id="statusBadge" class="badge ok">정상</span>
   </div>
   <div class="hero-meta">
@@ -77,11 +77,11 @@
   <div class="note" id="valueNote">값을 불러오는 중…</div>
 </section>
 
-<!-- ===== 관측 정보 ===== -->
+<!-- 관측 정보 -->
 <section>
   <h2>관측 정보</h2>
   <div class="row"><span class="k">출처</span><span class="v" id="sourceName">—</span></div>
-  <div class="row"><span class="k">출처 URL</span><span class="v mono" style="font-size:.72rem;" id="sourceUrl">—</span></div>
+  <div class="row"><span class="k">출처 URL</span><span class="v mono" style="font-size:.7rem;" id="sourceUrl">—</span></div>
   <div class="row"><span class="k">관측 시각 (source_time)</span><span class="v" id="sourceTime">—</span></div>
   <div class="row"><span class="k">조회 시각 (fetched_at)</span><span class="v" id="fetchedAt">—</span></div>
   <div class="row"><span class="k">기준 시간대</span><span class="v">Asia/Seoul</span></div>
@@ -89,16 +89,14 @@
   <div class="row"><span class="k">데이터 상태</span><span class="v mono" id="statusPair">fresh / none</span></div>
 </section>
 
-<!-- ===== 어제와 비교 ===== -->
+<!-- 어제와 비교 -->
 <section>
   <h2>어제와 비교</h2>
-  <div id="deltaBlock">
-    <div class="delta" id="deltaOut">—</div>
-    <div class="note" id="recalcNote">어제 기록이 아직 없습니다. 내일 다시 조회하면 어제 대비 변화가 표시됩니다.</div>
-  </div>
+  <div class="delta" id="deltaOut">—</div>
+  <div class="note" id="recalcNote">어제 기록이 아직 없습니다. 내일 다시 조회하면 어제 대비 변화가 표시됩니다.</div>
 </section>
 
-<!-- ===== 일별 기록 ===== -->
+<!-- 일별 기록 -->
 <section>
   <h2>일별 기록 <span class="small" id="realDateCount" style="font-weight:400;"></span></h2>
   <table>
@@ -107,60 +105,35 @@
   </table>
 </section>
 
-<!-- ===== 심사용 (접힘) ===== -->
-<details class="review">
-  <summary>심사용 — 장애 시뮬레이션 및 기준 대조</summary>
+<!-- 테스트 (작게, 접힘) -->
+<details class="test">
+  <summary>테스트</summary>
   <div class="inner">
+    <div class="small">합성 시험값으로 장애를 재생합니다. 합성 기록은 실제 이틀 비교에 사용되지 않습니다.</div>
 
-    <div class="notice">
-      아래 버튼은 합성 시험값으로 장애를 재생합니다. <b>합성 재생은 실제 이틀 비교에 사용되지 않습니다.</b>
-      실제 비교는 라이브 기록 2건(서로 다른 KST 날짜)만 사용합니다.
+    <h3>장애 재생</h3>
+    <div class="btns">
+      <button onclick="runFixture('T04-TIMEOUT')">timeout</button>
+      <button onclick="runFixture('T04-AUTH-401')">auth</button>
+      <button onclick="runFixture('T04-RATE-429')">rate_limit</button>
+      <button onclick="runFixture('T04-OFFLINE')">offline</button>
+      <button onclick="runFixture('T04-SCHEMA-BREAK')">schema_error</button>
+      <button class="recover" onclick="runFixture('T04-RECOVER-D2')">복구</button>
     </div>
-
-    <h3>연결 상태 / 오류 코드</h3>
-    <div class="row"><span class="k">freshness</span><span class="v mono" id="freshnessOut">fresh</span></div>
-    <div class="row"><span class="k">error_code</span><span class="v mono" id="errorCodeOut">none</span></div>
+    <div class="row" style="margin-top:10px;"><span class="k">freshness / error_code</span><span class="v mono" id="statusPairOut">fresh / none</span></div>
     <div class="row"><span class="k">마지막 정상값</span><span class="v" id="lastGoodOut">—</span></div>
     <div class="row"><span class="k">retry_after_seconds</span><span class="v mono" id="retryOut">—</span></div>
     <div class="small" id="simNote" style="margin-top:6px;"></div>
 
-    <h3>장애 재생 (5종) + 복구</h3>
-    <div class="btns">
-      <button onclick="runFixture('T04-TIMEOUT')">느린 응답 (timeout)</button>
-      <button onclick="runFixture('T04-AUTH-401')">401 거절 (auth)</button>
-      <button onclick="runFixture('T04-RATE-429')">호출 제한 (rate_limit)</button>
-      <button onclick="runFixture('T04-OFFLINE')">오프라인 (offline)</button>
-      <button onclick="runFixture('T04-SCHEMA-BREAK')">형식 변경 (schema_error)</button>
-      <button class="recover" onclick="runFixture('T04-RECOVER-D2')">복구 (recover-d2)</button>
-    </div>
-
-    <h3>일별 저장 검증 (합성)</h3>
-    <div class="row"><span class="k">오늘 기록 날짜</span><span class="v mono" id="todayKey">—</span></div>
+    <h3>일별 저장 검증</h3>
     <div class="row"><span class="k">전체 행 수</span><span class="v" id="rowCount">0</span></div>
-    <div class="row"><span class="k">마지막 시퀀스 결과</span><span class="v" id="seqResult">—</span></div>
+    <div class="row"><span class="k">마지막 결과</span><span class="v" id="seqResult">—</span></div>
     <div class="btns" style="margin-top:6px;">
-      <button onclick="simSameDay()">같은 날 3회 (D1-A→D1-B→D1-B)</button>
-      <button onclick="simNextDay()">다음 날 1회 (D2)</button>
-      <button onclick="liveFetch()">정상 조회 (라이브)</button>
-      <button class="danger" onclick="resetState()">전체 reset</button>
+      <button onclick="simSameDay()">같은 날 3회</button>
+      <button onclick="simNextDay()">다음 날 1회</button>
+      <button onclick="liveFetch()">정상 조회</button>
+      <button class="danger" onclick="resetState()">reset</button>
     </div>
-    <div class="small" style="margin-top:6px;">record_id = demo-signal_id-record_date. 같은 날짜는 같은 행 갱신, 다음 날짜는 새 행.</div>
-
-    <h3>확인 방법 4줄 (T04-C27)</h3>
-    <p class="small">
-      ① <b>어디로 가나요</b>: 이 페이지 상단 "대전 실시간 기온" 히어로와 "관측 정보" 표.<br>
-      ② <b>3단계 이내 무엇을 하나요</b>: 상단 값·관측/조회 시각 확인 → 심사용 섹션의 장애 재생 5종 버튼 각각 클릭 → 복구 버튼 클릭.<br>
-      ③ <b>무엇이 보이면 통과인가요</b>: 정상 시 9개 필드가 모두 표시되고, 장애 시 마지막 정상값이 유지되며 상태 배지가 stale·오류 코드로 바뀜. 복구 시 fresh/none으로 돌아오고 전체 행 수가 1→2로 증가하며 어제 대비 delta=15가 표시됨(합성 재생 기준). 라이브 이틀 기록이 2건이면 상단 "어제와 비교"에 실제 변화가 표시됨.<br>
-      ④ <b>안 될 때 무엇이 보이나요</b>: 네트워크 차단 시 상태 배지가 stale·offline으로 바뀌고 마지막 정상값의 조회 시각이 함께 표시됨.
-    </p>
-
-    <h3>AI와 나의 판단 3줄 (T04-C28)</h3>
-    <p class="small">
-      ① <b>AI에게 맡긴 일</b>: 정보판 HTML/CSS/JS 초안, 9개 필드 정규화 검증, 실패 5종 상태 매핑, record_id 기반 upsert 로직, LIVE/SYNTHETIC 분리 집계 구현.<br>
-      ② <b>학생이 직접 판단한 일</b>: Open-Meteo 소재 선택, 실패 시 마지막 정상값 유지 정책, delta를 magnitude(절대값)로 표시하기로 결정, stale 라벨 표시 방식, 라이브 기록만 이틀 비교에 쓰기로 결정.<br>
-      ③ <b>AI 제안을 따르지 않은 일</b>: AI가 어제 대비 변화를 부호 있는 값(+15/−15)으로 표시하는 방식을 제안했으나, 참조 구현(adapter-reset.example.js)의 comparisonFor()가 magnitude(절대값)를 쓰는 것을 확인하고 절대값 표시로 바꿨습니다.
-    </p>
-
   </div>
 </details>
 
@@ -176,6 +149,24 @@ const TZ = 'Asia/Seoul';
 const LIVE_URL = 'https://api.open-meteo.com/v1/forecast?latitude=36.35&longitude=127.38&current_weather=true&timezone=Asia%2FSeoul';
 const LIVE_PREFIX = 'https://api.open-meteo.com';
 const STATE_KEY = 't04_eval_state_v1';
+
+// ===== 날씨 코드 매핑 (화면 표시용, 저장 안 함) =====
+const WEATHER_MAP = {
+  0:'맑음', 1:'대체로 맑음', 2:'부분적 흐림', 3:'흐림',
+  45:'안개', 48:'짙은 안개',
+  51:'약한 이슬비', 53:'이슬비', 55:'강한 이슬비',
+  56:'어는 이슬비', 57:'강한 어는 이슬비',
+  61:'약한 비', 63:'비', 65:'강한 비',
+  66:'어는 비', 67:'강한 어는 비',
+  71:'약한 눈', 73:'눈', 75:'강한 눈', 77:'싸락눈',
+  80:'약한 소나기', 81:'소나기', 82:'강한 소나기',
+  85:'약한 눈 소나기', 86:'강한 눈 소나기',
+  95:'뇌우', 96:'우박 동반 뇌우', 99:'강한 우박 뇌우'
+};
+function weatherText(code){
+  if (code === undefined || code === null) return '';
+  return WEATHER_MAP[code] || ('코드 ' + code);
+}
 
 // ===== 유틸 =====
 function clone(v){ return JSON.parse(JSON.stringify(v)); }
@@ -195,7 +186,7 @@ function fmtKSTShort(iso){
   return new Intl.DateTimeFormat('ko-KR',{timeZone:TZ,month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(iso));
 }
 
-// ===== 검증 =====
+// ===== 검증 (9개 필드 강제) =====
 function validateNormalizedReading(r){
   if (!r || typeof r !== 'object' || Array.isArray(r)) throw new TypeError('not object');
   const ak = Object.keys(r).sort(), ek = [...NORMALIZED_KEYS].sort();
@@ -225,7 +216,7 @@ function loadState(){
 }
 function saveState(){ localStorage.setItem(STATE_KEY, JSON.stringify(STATE)); }
 
-// ===== 저장 로직 =====
+// ===== 저장 (9개 필드만 저장, 날씨는 저장 안 함) =====
 function recordIdFor(r){ return `demo-${r.signal_id}-${r.record_date}`; }
 function comparisonFor(rows, current){
   const prev = rows.filter(x=>x.signal_id===current.signal_id && x.record_date < current.record_date)
@@ -321,8 +312,7 @@ function runFixture(id){
   } else err = 'schema_error';
   if (err) applyError(err, meta);
   document.getElementById('simNote').textContent =
-    '합성 재생: ' + id + ' → ' + STATE.status.freshness + ' / ' + STATE.status.error_code +
-    ' (SYNTHETIC — 실제 이틀 비교에 사용되지 않음)';
+    '합성 재생: ' + id + ' → ' + STATE.status.freshness + ' / ' + STATE.status.error_code;
   render();
 }
 
@@ -332,26 +322,30 @@ function simSameDay(){
   applySuccessfulReading(FIXTURES['T04-NORMAL-D1-B'].payload, {fixture_id:'D1-B'});
   applySuccessfulReading(FIXTURES['T04-NORMAL-D1-B'].payload, {fixture_id:'D1-B again'});
   const after = STATE.daily_readings.length;
-  document.getElementById('seqResult').textContent = `같은 날 3회: ${before} → ${after}행 (${before===after?'중복 방지 OK':'중복!'})`;
+  document.getElementById('seqResult').textContent =
+    `같은 날 3회: ${before} → ${after}행 (${before===after?'갱신 OK':'행 증가'})`;
   render();
 }
 function simNextDay(){
   const before = STATE.daily_readings.length;
   applySuccessfulReading(FIXTURES['T04-NORMAL-D2'].payload, {fixture_id:'D2'});
   const after = STATE.daily_readings.length;
-  document.getElementById('seqResult').textContent = `다음 날 1회: ${before} → ${after}행 (${after===before+1?'새 행 OK':'오류'})`;
+  const msg = after === before
+    ? `다음 날 1회: ${before} → ${after}행 (이미 있는 날짜라 갱신)`
+    : `다음 날 1회: ${before} → ${after}행 (새 행 OK)`;
+  document.getElementById('seqResult').textContent = msg;
   render();
 }
 function resetState(){
   STATE = resetEvaluationState();
   saveState();
   document.getElementById('seqResult').textContent = '전체 reset 완료';
-  document.getElementById('simNote').textContent = '모든 기록(라이브+합성)이 지워졌습니다.';
+  document.getElementById('simNote').textContent = '모든 기록이 지워졌습니다.';
   render();
   liveFetch();
 }
 
-// ===== 라이브 조회 =====
+// ===== 라이브 조회 (날씨는 화면 표시용, 저장 안 함) =====
 async function liveFetch(){
   const now = new Date().toISOString();
   document.getElementById('valueNote').textContent = '실시간 조회 중…';
@@ -361,6 +355,8 @@ async function liveFetch(){
     const data = await res.json();
     const cw = data.current_weather;
     if (!cw || typeof cw.temperature !== 'number') throw new Error('schema');
+
+    // 저장용: 9개 필드만
     const reading = {
       signal_id: 'daejeon-temp',
       normalized_value: cw.temperature,
@@ -373,6 +369,9 @@ async function liveFetch(){
       record_date: kstDate(now)
     };
     applySuccessfulReading(reading, {fixture_id:'LIVE', virtual_now: now});
+
+    // 화면 표시용 날씨 (저장 안 함)
+    document.getElementById('weatherLabel').textContent = weatherText(cw.weathercode);
     document.getElementById('valueNote').textContent = '실시간 조회 성공';
     render();
   } catch (e) {
@@ -382,6 +381,7 @@ async function liveFetch(){
     else if (e.message.includes('HTTP 429')) code = 'rate_limit';
     else if (!navigator.onLine) code = 'offline';
     applyError(code, {fixture_id:'LIVE', virtual_now: now});
+    document.getElementById('weatherLabel').textContent = '';
     document.getElementById('valueNote').textContent = '실시간 조회 실패 — 마지막 정상값 표시 중';
     render();
   }
@@ -393,18 +393,18 @@ function render(){
   const cur = s.current_reading;
   const last = s.daily_readings.length ? s.daily_readings[s.daily_readings.length-1] : null;
 
-  // 히어로
   const showVal = cur ? cur.normalized_value : (last ? last.normalized_value : null);
   document.getElementById('tempValue').textContent = showVal !== null ? showVal : '—';
   document.getElementById('unitLabel').textContent = cur ? cur.unit : (last ? last.unit : '');
+
   const badge = document.getElementById('statusBadge');
   if (s.status && s.status.freshness === 'fresh') { badge.className='badge ok'; badge.textContent='정상'; }
   else if (s.status) { badge.className='badge stale'; badge.textContent='오래된 값 · ' + s.status.error_code; }
   else { badge.className='badge ok'; badge.textContent='—'; }
+
   document.getElementById('sourceTimeShort').textContent = cur ? fmtKSTShort(cur.source_time) : '—';
   document.getElementById('fetchedAtShort').textContent = cur ? fmtKSTShort(cur.fetched_at) : '—';
 
-  // 관측 정보
   document.getElementById('sourceName').textContent = cur ? cur.source_name : '—';
   document.getElementById('sourceUrl').textContent = cur ? cur.source_url : '—';
   document.getElementById('sourceTime').textContent = cur ? fmtKST(cur.source_time) : '—';
@@ -412,44 +412,42 @@ function render(){
   document.getElementById('recordDate').textContent = cur ? cur.record_date : '—';
   document.getElementById('statusPair').textContent = s.status ? s.status.freshness + ' / ' + s.status.error_code : '—';
 
-  // 어제와 비교 (라이브만)
+  // 어제와 비교 (LIVE만)
   const liveRows = s.daily_readings.filter(r => r.reading.source_url.startsWith(LIVE_PREFIX));
   const liveDates = new Set(liveRows.map(r => r.record_date));
   document.getElementById('realDateCount').textContent = '· 라이브 ' + liveDates.size + ' / 2';
 
-  let deltaText = '—', noteText = '';
+  let deltaHtml = '—', noteText = '';
   if (liveRows.length >= 2) {
     const sorted = [...liveRows].sort((a,b) => a.record_date.localeCompare(b.record_date));
     const prev = sorted[sorted.length-2], curr = sorted[sorted.length-1];
     if (prev.unit === curr.unit) {
       const signed = curr.normalized_value - prev.normalized_value;
       const dir = signed > 0 ? '상승' : signed < 0 ? '하락' : '변화 없음';
-      deltaText = Math.abs(signed).toFixed(1) + ' ' + curr.unit + ' <small>' + dir + ' · ' + prev.record_date + ' → ' + curr.record_date + '</small>';
+      deltaHtml = Math.abs(signed).toFixed(1) + ' ' + curr.unit +
+        ' <small>' + dir + ' · ' + prev.record_date + ' → ' + curr.record_date + '</small>';
       noteText = '최신값 − 이전값 = ' + Math.abs(signed).toFixed(1) + ' ' + curr.unit + ' (절대값 기준)';
     } else {
-      deltaText = '—'; noteText = '단위가 달라 비교할 수 없습니다.';
+      noteText = '단위가 달라 비교할 수 없습니다.';
     }
   } else {
-    deltaText = '—'; noteText = '어제 기록이 아직 없습니다. 내일 다시 조회하면 어제 대비 변화가 표시됩니다.';
+    noteText = '어제 기록이 아직 없습니다. 내일 다시 조회하면 어제 대비 변화가 표시됩니다.';
   }
-  document.getElementById('deltaOut').innerHTML = deltaText;
+  document.getElementById('deltaOut').innerHTML = deltaHtml;
   document.getElementById('recalcNote').textContent = noteText;
 
-  // 심사용 상태
-  document.getElementById('freshnessOut').textContent = s.status ? s.status.freshness : '—';
-  document.getElementById('errorCodeOut').textContent = s.status ? s.status.error_code : '—';
+  // 테스트 섹션
+  document.getElementById('statusPairOut').textContent = s.status ? s.status.freshness + ' / ' + s.status.error_code : '—';
   document.getElementById('lastGoodOut').textContent = last ? last.normalized_value + ' ' + last.unit + ' (' + last.record_date + ')' : '없음';
   document.getElementById('retryOut').textContent = s.last_run ? (s.last_run.retry_after_seconds ?? '—') : '—';
-  document.getElementById('todayKey').textContent = kstDate(new Date().toISOString());
   document.getElementById('rowCount').textContent = s.daily_readings.length;
 
-  // 일별 기록 표
   const tbody = document.getElementById('dailyTable');
   if (!s.daily_readings.length) tbody.innerHTML = '<tr><td colspan="6" class="empty">기록 없음</td></tr>';
   else tbody.innerHTML = s.daily_readings.map(r => {
     const isLive = r.reading.source_url.startsWith(LIVE_PREFIX);
     const tag = isLive ? '<span class="tag ok">LIVE</span>' : '<span class="tag stale">SYNTHETIC</span>';
-    return `<tr><td>${r.record_date}</td><td>${r.normalized_value}</td><td>${r.unit}</td><td class="mono" style="font-size:.74rem;">${r.reading.source_time||'null'}</td><td class="mono" style="font-size:.74rem;">${r.last_fetched_at}</td><td>${tag}</td></tr>`;
+    return `<tr><td>${r.record_date}</td><td>${r.normalized_value}</td><td>${r.unit}</td><td class="mono" style="font-size:.72rem;">${r.reading.source_time||'null'}</td><td class="mono" style="font-size:.72rem;">${r.last_fetched_at}</td><td>${tag}</td></tr>`;
   }).join('');
 }
 

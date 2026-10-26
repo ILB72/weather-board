@@ -86,6 +86,7 @@
   <div class="row"><span class="k">조회 시각 (fetched_at)</span><span class="v" id="fetchedAt">—</span></div>
   <div class="row"><span class="k">기준 시간대</span><span class="v">Asia/Seoul</span></div>
   <div class="row"><span class="k">기록 날짜 (KST)</span><span class="v" id="recordDate">—</span></div>
+  <div class="row"><span class="k">날씨</span><span class="v" id="weatherInfo">—</span></div>
   <div class="row"><span class="k">데이터 상태</span><span class="v mono" id="statusPair">fresh / none</span></div>
 </section>
 
@@ -93,6 +94,8 @@
 <section>
   <h2>어제와 비교</h2>
   <div class="delta" id="deltaOut">—</div>
+  <div class="row" style="margin-top:8px;"><span class="k">어제 날씨</span><span class="v" id="prevWeather">—</span></div>
+  <div class="row"><span class="k">오늘 날씨</span><span class="v" id="currWeather">—</span></div>
   <div class="note" id="recalcNote">어제 기록이 아직 없습니다. 내일 다시 조회하면 어제 대비 변화가 표시됩니다.</div>
 </section>
 
@@ -100,12 +103,12 @@
 <section>
   <h2>일별 기록 <span class="small" id="realDateCount" style="font-weight:400;"></span></h2>
   <table>
-    <thead><tr><th>날짜</th><th>값</th><th>단위</th><th>관측 시각</th><th>조회 시각</th><th>구분</th></tr></thead>
+    <thead><tr><th>날짜</th><th>값</th><th>단위</th><th>날씨</th><th>관측 시각</th><th>구분</th></tr></thead>
     <tbody id="dailyTable"><tr><td colspan="6" class="empty">기록 없음</td></tr></tbody>
   </table>
 </section>
 
-<!-- 테스트 (작게, 접힘) -->
+<!-- 테스트 -->
 <details class="test">
   <summary>테스트</summary>
   <div class="inner">
@@ -150,7 +153,7 @@ const LIVE_URL = 'https://api.open-meteo.com/v1/forecast?latitude=36.35&longitud
 const LIVE_PREFIX = 'https://api.open-meteo.com';
 const STATE_KEY = 't04_eval_state_v1';
 
-// ===== 날씨 코드 매핑 (화면 표시용, 저장 안 함) =====
+// ===== 날씨 코드 매핑 (화면 표시용) =====
 const WEATHER_MAP = {
   0:'맑음', 1:'대체로 맑음', 2:'부분적 흐림', 3:'흐림',
   45:'안개', 48:'짙은 안개',
@@ -216,18 +219,20 @@ function loadState(){
 }
 function saveState(){ localStorage.setItem(STATE_KEY, JSON.stringify(STATE)); }
 
-// ===== 저장 (9개 필드만 저장, 날씨는 저장 안 함) =====
+// ===== 저장 (reading은 9개 필드, weather_display는 행 레벨) =====
 function recordIdFor(r){ return `demo-${r.signal_id}-${r.record_date}`; }
 function comparisonFor(rows, current){
   const prev = rows.filter(x=>x.signal_id===current.signal_id && x.record_date < current.record_date)
     .sort((a,b)=>b.record_date.localeCompare(a.record_date))[0];
-  if (!prev) return {state:'insufficient',direction:null,magnitude:null,unit:null};
-  if (prev.unit !== current.unit) return {state:'unit_mismatch',direction:null,magnitude:null,unit:null};
+  if (!prev) return {state:'insufficient',direction:null,magnitude:null,unit:null,prev:null};
+  if (prev.unit !== current.unit) return {state:'unit_mismatch',direction:null,magnitude:null,unit:null,prev:prev};
   const signed = current.normalized_value - prev.normalized_value;
   return {state:'comparable',direction: signed>0?'increase':signed<0?'decrease':'unchanged',
-    magnitude: Math.abs(signed), unit: current.unit};
+    magnitude: Math.abs(signed), unit: current.unit, prev: prev};
 }
-function applySuccessfulReading(reading, meta={}){
+
+// weatherDisplay: 화면 표시용 날씨 (없으면 null)
+function applySuccessfulReading(reading, meta={}, weatherDisplay=null){
   validateNormalizedReading(reading);
   const s = clone(STATE);
   const idx = s.daily_readings.findIndex(r=>r.signal_id===reading.signal_id && r.record_date===reading.record_date);
@@ -235,7 +240,9 @@ function applySuccessfulReading(reading, meta={}){
   const row = { record_id: ex?ex.record_id:recordIdFor(reading), signal_id:reading.signal_id,
     record_date:reading.record_date, normalized_value:reading.normalized_value, unit:reading.unit,
     first_fetched_at: ex?ex.first_fetched_at:reading.fetched_at, last_fetched_at:reading.fetched_at,
-    reading: clone(reading) };
+    reading: clone(reading),
+    weather_display: weatherDisplay !== null && weatherDisplay !== undefined ? weatherDisplay : (ex ? ex.weather_display ?? null : null)
+  };
   if (idx>=0) s.daily_readings[idx]=row; else s.daily_readings.push(row);
   s.daily_readings.sort((a,b)=>a.record_date.localeCompare(b.record_date));
   s.current_reading = clone(reading);
@@ -307,7 +314,7 @@ function runFixture(id){
   else if (f.transport.status === 401 || f.transport.status === 403) err = 'auth';
   else if (f.transport.status === 429) err = 'rate_limit';
   else if (f.transport.status >= 200 && f.transport.status < 300) {
-    try { applySuccessfulReading(f.payload, meta); }
+    try { applySuccessfulReading(f.payload, meta, null); }
     catch { applyError('schema_error', meta); }
   } else err = 'schema_error';
   if (err) applyError(err, meta);
@@ -318,9 +325,9 @@ function runFixture(id){
 
 function simSameDay(){
   const before = STATE.daily_readings.length;
-  applySuccessfulReading(FIXTURES['T04-NORMAL-D1-A'].payload, {fixture_id:'D1-A'});
-  applySuccessfulReading(FIXTURES['T04-NORMAL-D1-B'].payload, {fixture_id:'D1-B'});
-  applySuccessfulReading(FIXTURES['T04-NORMAL-D1-B'].payload, {fixture_id:'D1-B again'});
+  applySuccessfulReading(FIXTURES['T04-NORMAL-D1-A'].payload, {fixture_id:'D1-A'}, null);
+  applySuccessfulReading(FIXTURES['T04-NORMAL-D1-B'].payload, {fixture_id:'D1-B'}, null);
+  applySuccessfulReading(FIXTURES['T04-NORMAL-D1-B'].payload, {fixture_id:'D1-B again'}, null);
   const after = STATE.daily_readings.length;
   document.getElementById('seqResult').textContent =
     `같은 날 3회: ${before} → ${after}행 (${before===after?'갱신 OK':'행 증가'})`;
@@ -328,7 +335,7 @@ function simSameDay(){
 }
 function simNextDay(){
   const before = STATE.daily_readings.length;
-  applySuccessfulReading(FIXTURES['T04-NORMAL-D2'].payload, {fixture_id:'D2'});
+  applySuccessfulReading(FIXTURES['T04-NORMAL-D2'].payload, {fixture_id:'D2'}, null);
   const after = STATE.daily_readings.length;
   const msg = after === before
     ? `다음 날 1회: ${before} → ${after}행 (이미 있는 날짜라 갱신)`
@@ -345,7 +352,7 @@ function resetState(){
   liveFetch();
 }
 
-// ===== 라이브 조회 (날씨는 화면 표시용, 저장 안 함) =====
+// ===== 라이브 조회 (날씨는 행 레벨 weather_display로 저장) =====
 async function liveFetch(){
   const now = new Date().toISOString();
   document.getElementById('valueNote').textContent = '실시간 조회 중…';
@@ -368,10 +375,8 @@ async function liveFetch(){
       record_timezone: 'Asia/Seoul',
       record_date: kstDate(now)
     };
-    applySuccessfulReading(reading, {fixture_id:'LIVE', virtual_now: now});
-
-    // 화면 표시용 날씨 (저장 안 함)
-    document.getElementById('weatherLabel').textContent = weatherText(cw.weathercode);
+    const wText = weatherText(cw.weathercode);
+    applySuccessfulReading(reading, {fixture_id:'LIVE', virtual_now: now}, wText);
     document.getElementById('valueNote').textContent = '실시간 조회 성공';
     render();
   } catch (e) {
@@ -381,7 +386,6 @@ async function liveFetch(){
     else if (e.message.includes('HTTP 429')) code = 'rate_limit';
     else if (!navigator.onLine) code = 'offline';
     applyError(code, {fixture_id:'LIVE', virtual_now: now});
-    document.getElementById('weatherLabel').textContent = '';
     document.getElementById('valueNote').textContent = '실시간 조회 실패 — 마지막 정상값 표시 중';
     render();
   }
@@ -392,10 +396,12 @@ function render(){
   const s = STATE;
   const cur = s.current_reading;
   const last = s.daily_readings.length ? s.daily_readings[s.daily_readings.length-1] : null;
+  const lastRow = last;
 
   const showVal = cur ? cur.normalized_value : (last ? last.normalized_value : null);
   document.getElementById('tempValue').textContent = showVal !== null ? showVal : '—';
   document.getElementById('unitLabel').textContent = cur ? cur.unit : (last ? last.unit : '');
+  document.getElementById('weatherLabel').textContent = (lastRow && lastRow.weather_display) ? lastRow.weather_display : '';
 
   const badge = document.getElementById('statusBadge');
   if (s.status && s.status.freshness === 'fresh') { badge.className='badge ok'; badge.textContent='정상'; }
@@ -410,6 +416,7 @@ function render(){
   document.getElementById('sourceTime').textContent = cur ? fmtKST(cur.source_time) : '—';
   document.getElementById('fetchedAt').textContent = cur ? fmtKST(cur.fetched_at) : '—';
   document.getElementById('recordDate').textContent = cur ? cur.record_date : '—';
+  document.getElementById('weatherInfo').textContent = (lastRow && lastRow.weather_display) ? lastRow.weather_display : '—';
   document.getElementById('statusPair').textContent = s.status ? s.status.freshness + ' / ' + s.status.error_code : '—';
 
   // 어제와 비교 (LIVE만)
@@ -417,10 +424,12 @@ function render(){
   const liveDates = new Set(liveRows.map(r => r.record_date));
   document.getElementById('realDateCount').textContent = '· 라이브 ' + liveDates.size + ' / 2';
 
-  let deltaHtml = '—', noteText = '';
+  let deltaHtml = '—', noteText = '', prevW = '—', currW = '—';
   if (liveRows.length >= 2) {
     const sorted = [...liveRows].sort((a,b) => a.record_date.localeCompare(b.record_date));
     const prev = sorted[sorted.length-2], curr = sorted[sorted.length-1];
+    prevW = prev.weather_display || '—';
+    currW = curr.weather_display || '—';
     if (prev.unit === curr.unit) {
       const signed = curr.normalized_value - prev.normalized_value;
       const dir = signed > 0 ? '상승' : signed < 0 ? '하락' : '변화 없음';
@@ -432,9 +441,12 @@ function render(){
     }
   } else {
     noteText = '어제 기록이 아직 없습니다. 내일 다시 조회하면 어제 대비 변화가 표시됩니다.';
+    if (liveRows.length === 1) currW = liveRows[0].weather_display || '—';
   }
   document.getElementById('deltaOut').innerHTML = deltaHtml;
   document.getElementById('recalcNote').textContent = noteText;
+  document.getElementById('prevWeather').textContent = prevW;
+  document.getElementById('currWeather').textContent = currW;
 
   // 테스트 섹션
   document.getElementById('statusPairOut').textContent = s.status ? s.status.freshness + ' / ' + s.status.error_code : '—';
@@ -447,7 +459,8 @@ function render(){
   else tbody.innerHTML = s.daily_readings.map(r => {
     const isLive = r.reading.source_url.startsWith(LIVE_PREFIX);
     const tag = isLive ? '<span class="tag ok">LIVE</span>' : '<span class="tag stale">SYNTHETIC</span>';
-    return `<tr><td>${r.record_date}</td><td>${r.normalized_value}</td><td>${r.unit}</td><td class="mono" style="font-size:.72rem;">${r.reading.source_time||'null'}</td><td class="mono" style="font-size:.72rem;">${r.last_fetched_at}</td><td>${tag}</td></tr>`;
+    const w = r.weather_display ? r.weather_display : '—';
+    return `<tr><td>${r.record_date}</td><td>${r.normalized_value}</td><td>${r.unit}</td><td>${w}</td><td class="mono" style="font-size:.72rem;">${r.reading.source_time||'null'}</td><td>${tag}</td></tr>`;
   }).join('');
 }
 

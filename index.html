@@ -403,4 +403,18 @@ function render(){
   const tbody = document.getElementById('dailyTable');
   if (!s.daily_readings.length) tbody.innerHTML = '<tr><td colspan="6" class="small">기록 없음</td></tr>';
   else tbody.innerHTML = s.daily_readings.map(r=>
-    `<tr><td>${r.record_date}</td><td class="mono" style="font-size:.7rem;">${r.record_id}</td><td>${r.normalized_value}</td><td>${r.unit}</td><td class="mono" style="font-size:.7rem;">${r.reading.source_time||'null'}</td><td class="mono" style="font-size:.7
+    `<tr><td>${r.record_date}</td><td class="mono" style="font-size:.7rem;">${r.record_id}</td><td>${r.normalized_value}</td><td>${r.unit}</td><td class="mono" style="font-size:.7rem;">${r.reading.source_time||'null'}</td><td class="mono" style="font-size:.7rem;">${r.last_fetched_at}</td></tr>`
+  ).join('');
+
+  document.getElementById('recalcNote').textContent = s.last_comparison.state==='comparable'
+    ? `재계산: 최신값 − 이전값 = ${s.last_comparison.magnitude} ${s.last_comparison.unit} (${s.last_comparison.direction})`
+    : s.last_comparison.state==='insufficient' ? '비교할 이전 날짜 기록 없음' : '단위 불일치';
+}
+
+// ===== 초기화 =====
+document.getElementById('reqUrl').textContent = LIVE_URL;
+render();
+liveFetch();
+</script>
+</body>
+</html>

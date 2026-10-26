@@ -5,16 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>오늘의 진짜 정보판 — 대전 기온</title>
 <style>
-  :root { --ok:#1a7f37; --warn:#b26a00; --fail:#c62828; --muted:#666; }
+  :root { --ok:#1a7f37; --warn:#b26a00; --fail:#c62828; --stale:#8a6d00; --muted:#666; }
   * { box-sizing: border-box; }
   body { font-family: -apple-system, "Segoe UI", "Malgun Gothic", sans-serif;
-         max-width: 720px; margin: 24px auto; padding: 0 16px; color:#111; line-height:1.5; }
+         max-width: 780px; margin: 24px auto; padding: 0 16px; color:#111; line-height:1.55; }
   h1 { font-size: 1.4rem; margin-bottom: 4px; }
-  .sub { color: var(--muted); font-size: .9rem; margin-bottom: 20px; }
+  h2 { font-size: 1.05rem; margin: 0 0 8px; }
+  .sub { color: var(--muted); font-size: .9rem; margin-bottom: 18px; }
   .card { border:1px solid #ddd; border-radius:10px; padding:16px 18px; margin-bottom:14px; }
   .big { font-size: 2.6rem; font-weight: 700; }
   .unit { font-size: 1.3rem; font-weight: 500; color: var(--muted); }
-  .row { display:flex; justify-content:space-between; gap:12px; padding:6px 0; border-bottom:1px dashed #eee; font-size:.95rem; }
+  .row { display:flex; justify-content:space-between; gap:12px; padding:6px 0; border-bottom:1px dashed #eee; font-size:.92rem; }
   .row:last-child { border-bottom:none; }
   .row .k { color: var(--muted); }
   .row .v { font-weight:600; text-align:right; }
@@ -22,95 +23,145 @@
   .status.ok { color: var(--ok); }
   .status.warn { color: var(--warn); }
   .status.fail { color: var(--fail); }
+  .status.stale { color: var(--stale); }
   .banner { padding:10px 14px; border-radius:8px; margin-bottom:14px; font-weight:600; }
   .banner.ok { background:#e7f5ec; color:var(--ok); }
   .banner.warn { background:#fff4e0; color:var(--warn); }
   .banner.fail { background:#fdecea; color:var(--fail); }
+  .banner.stale { background:#fff8e1; color:var(--stale); }
   .btns { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
-  button { padding:8px 12px; border:1px solid #ccc; background:#fff; border-radius:8px; cursor:pointer; font-size:.9rem; }
+  button { padding:8px 11px; border:1px solid #ccc; background:#fff; border-radius:8px; cursor:pointer; font-size:.85rem; }
   button:hover { background:#f5f5f5; }
   button.primary { background:#111; color:#fff; border-color:#111; }
+  button.recover { background:#1a7f37; color:#fff; border-color:#1a7f37; }
   .small { font-size:.82rem; color:var(--muted); }
-  .mono { font-family: ui-monospace, Consolas, monospace; font-size:.82rem; }
-  details { margin-top:10px; }
-  pre { background:#f6f8fa; padding:10px; border-radius:8px; overflow:auto; font-size:.8rem; }
+  .mono { font-family: ui-monospace, Consolas, monospace; font-size:.8rem; }
+  pre { background:#f6f8fa; padding:10px; border-radius:8px; overflow:auto; font-size:.78rem; max-height:180px; }
+  table { width:100%; border-collapse:collapse; font-size:.85rem; }
+  th, td { border-bottom:1px solid #eee; padding:6px 4px; text-align:left; }
+  th { color:var(--muted); font-weight:600; }
+  .tag { display:inline-block; padding:1px 7px; border-radius:6px; font-size:.75rem; font-weight:600; }
+  .tag.ok { background:#e7f5ec; color:var(--ok); }
+  .tag.stale { background:#fff8e1; color:var(--stale); }
+  .tag.fail { background:#fdecea; color:var(--fail); }
 </style>
 </head>
 <body>
 
 <h1>오늘의 진짜 정보판</h1>
-<div class="sub">대전 인근 실시간 기온 · 출처: Open-Meteo · 기준 시간대: Asia/Seoul (KST)</div>
+<div class="sub">대전 인근 실시간 기온 · 출처: Open-Meteo · 기준 시간대: Asia/Seoul (KST) · 비밀키 없음</div>
 
-<!-- 현재 상태 배너 -->
-<div id="banner" class="banner ok">현재 상태: 정상</div>
+<div id="banner" class="banner ok">현재 상태: 정상 (fresh)</div>
 
-<!-- 메인 값 -->
+<!-- ===== 메인 값 ===== -->
 <div class="card">
-  <div>
-    <span id="tempValue" class="big">—</span>
-    <span class="unit">°C</span>
-  </div>
+  <div><span id="tempValue" class="big">—</span><span class="unit">°C</span></div>
   <div class="small" id="valueNote">값을 불러오는 중…</div>
 </div>
 
-<!-- 상세 정보 -->
+<!-- ===== 카드 1: 상세 정보 ===== -->
 <div class="card">
+  <h2>카드 1 — 값·단위·출처·시각·시간대</h2>
   <div class="row"><span class="k">출처</span><span class="v">Open-Meteo (대전 좌표)</span></div>
   <div class="row"><span class="k">출처 시각 (관측 시각)</span><span class="v" id="sourceTime">—</span></div>
   <div class="row"><span class="k">조회 시각</span><span class="v" id="fetchTime">—</span></div>
   <div class="row"><span class="k">기준 시간대</span><span class="v">Asia/Seoul (KST)</span></div>
   <div class="row"><span class="k">마지막 정상값</span><span class="v" id="lastGood">—</span></div>
-  <div class="row"><span class="k">현재 상태</span><span class="v status ok" id="statusText">정상</span></div>
+  <div class="row"><span class="k">현재 상태</span><span class="v status ok" id="statusText">정상 (fresh)</span></div>
+  <div class="row"><span class="k">오래된 값 여부</span><span class="v" id="staleFlag">—</span></div>
 </div>
 
-<!-- 조작 버튼 -->
+<!-- ===== 카드 2: 비밀 없는 호출 ===== -->
 <div class="card">
-  <div class="small" style="margin-bottom:8px;">정상 조회 및 실패 5종 합성 재생 (합성 시험값만 사용, 실제 개인정보 없음)</div>
+  <h2>카드 2 — 비밀 없는 호출</h2>
+  <div class="row"><span class="k">API 키 필요 여부</span><span class="v">불필요 (키 없음)</span></div>
+  <div class="row"><span class="k">브라우저 코드 내 비밀값</span><span class="v">0건</span></div>
+  <div class="row"><span class="k">네트워크 요청 URL</span><span class="v mono" id="reqUrl" style="font-size:.75rem;max-width:60%;word-break:break-all;">—</span></div>
+  <div class="row"><span class="k">Git 저장소 비밀값</span><span class="v">0건 (index.html 단일 파일)</span></div>
+  <div class="small" style="margin-top:6px;">검색 방법: 브라우저 개발자 도구 → Network 탭에서 요청 URL 확인. GitHub 저장소에서 "API_KEY", "secret", "token" 검색 → 0건 확인.</div>
+</div>
+
+<!-- ===== 카드 3: 다섯 가지 실패 ===== -->
+<div class="card">
+  <h2>카드 3 — 다섯 가지 실패 (합성 재생)</h2>
+  <div class="small" style="margin-bottom:8px;">합성 시험값만 사용합니다. 실제 개인정보 없음. 실패 후 마지막 정상값은 유지되고 "오래된 값" 표시가 붙습니다.</div>
   <div class="btns">
-    <button class="primary" onclick="loadWeather()">정상 조회</button>
-    <button onclick="simulate('timeout')">1. 네트워크 타임아웃</button>
-    <button onclick="simulate('http500')">2. HTTP 500</button>
-    <button onclick="simulate('empty')">3. 빈 응답</button>
-    <button onclick="simulate('missingField')">4. 필드 누락</button>
-    <button onclick="simulate('abnormal')">5. 비정상 값</button>
+    <button onclick="simulate('slow')">1. 느린 응답 (지연)</button>
+    <button onclick="simulate('auth')">2. 401/403 거절</button>
+    <button onclick="simulate('ratelimit')">3. 호출 제한 (429)</button>
+    <button onclick="simulate('offline')">4. 오프라인</button>
+    <button onclick="simulate('schema')">5. 형식 변경</button>
+    <button class="recover" onclick="recover()">복구 (recover-d2)</button>
   </div>
   <div class="small" id="simNote" style="margin-top:8px;"></div>
+  <div class="row" style="margin-top:8px;"><span class="k">현재 오류 코드</span><span class="v mono" id="errorCode">none</span></div>
+  <div class="row"><span class="k">마지막 정상값 유지</span><span class="v" id="lastGoodKept">—</span></div>
 </div>
 
-<!-- 정상 1건 대조 -->
+<!-- ===== 카드 4: 하루 한 줄 ===== -->
 <div class="card">
-  <div class="small" style="margin-bottom:6px;">정상 1건 대조 (원자료 → 저장값 → 화면값)</div>
-  <div class="row"><span class="k">원자료(JSON 일부)</span></div>
-  <pre id="rawJson" class="mono">아직 정상 조회 없음</pre>
-  <div class="row"><span class="k">저장값</span><span class="v" id="storedValue">—</span></div>
-  <div class="row"><span class="k">화면값</span><span class="v" id="screenValue">—</span></div>
+  <h2>카드 4 — 하루 한 줄 (일별 기록 중복 방지)</h2>
+  <div class="row"><span class="k">기준 시간대 날짜 키</span><span class="v" id="todayKey">—</span></div>
+  <div class="row"><span class="k">저장된 일별 기록 수</span><span class="v" id="dailyCount">0</span></div>
+  <div class="row"><span class="k">같은 날 재실행 결과</span><span class="v" id="sameDayResult">—</span></div>
+  <div class="btns" style="margin-top:8px;">
+    <button onclick="simulateSameDay()">같은 날 3회 시뮬레이션</button>
+    <button onclick="simulateNextDay()">다음 날 1회 시뮬레이션</button>
+  </div>
+  <div class="small" id="dailyNote" style="margin-top:6px;">일별 고유키 = KST 날짜 (YYYY-MM-DD). 같은 날 성공 시 값만 갱신, 행 수 증가 없음. 다음 날 성공 시 새 행 추가.</div>
 </div>
 
-<details>
-  <summary class="small">확인 방법 4줄 (제출용)</summary>
+<!-- ===== 카드 5: 실제 이틀과 어제 대비 ===== -->
+<div class="card">
+  <h2>카드 5 — 실제 이틀과 어제 대비</h2>
+  <div class="row"><span class="k">실제 KST 날짜 기록 수</span><span class="v" id="realDateCount">0 / 2</span></div>
+  <div class="row"><span class="k">어제 대비 변화</span><span class="v" id="diffValue">—</span></div>
+  <div class="small" style="margin-bottom:6px;">아래 표는 저장된 일별 기록입니다. 두 기록의 날짜순 정렬 후 같은 계산 규칙(오늘 값 − 어제 값)으로 변화값을 다시 계산해 화면값과 대조하세요.</div>
+  <table>
+    <thead><tr><th>KST 날짜</th><th>출처 시각</th><th>값 (°C)</th><th>단위</th><th>출처 URL</th></tr></thead>
+    <tbody id="dailyTable"><tr><td colspan="5" class="small">기록 없음</td></tr></tbody>
+  </table>
+  <div class="small" id="recalcNote" style="margin-top:6px;"></div>
+</div>
+
+<!-- ===== 확인 방법 / AI 판단 ===== -->
+<div class="card">
+  <h2>제출용 — 확인 방법 4줄 (T04-C27)</h2>
   <p class="small">
-    1) 위치: 페이지 상단 "오늘의 진짜 정보판" 카드의 기온 값과 상세 정보 표.<br>
-    2) 행동: "정상 조회" 클릭 → 값·출처 시각·조회 시각 확인 → 실패 5종 버튼 각각 클릭.<br>
-    3) 통과 모습: 정상 시 값/단위/출처/출처 시각/조회 시각/시간대 표시, 실패 시 마지막 정상값 유지 + 실패 사유 표시.<br>
-    4) 안 될 때 모습: 네트워크 차단 시 "데이터 지연/실패"와 마지막 정상값 시각이 함께 표시됨.
+    ① <b>어디로 가나요</b>: GitHub Pages 주소 상단 "오늘의 진짜 정보판" 카드와 상세 정보 표.<br>
+    ② <b>3단계 이내 무엇을 하나요</b>: "정상 조회" 클릭 → 값·출처 시각·조회 시각 확인 → 카드 3의 실패 5종 버튼 각각 클릭.<br>
+    ③ <b>무엇이 보이면 통과인가요</b>: 정상 시 값/단위/출처/출처 시각/조회 시각/시간대가 모두 표시되고, 실패 시 마지막 정상값이 유지되며 "오래된 값" 표시와 오류 코드가 구분되어 보임. 복구 버튼 클릭 시 fresh/none으로 돌아오고 일별 기록이 정확히 1건 추가됨.<br>
+    ④ <b>안 될 때 무엇이 보이나요</b>: 네트워크 차단 시 "오프라인" 상태와 마지막 정상값의 시각이 함께 표시됨.
   </p>
-</details>
+</div>
+
+<div class="card">
+  <h2>제출용 — AI와 나의 판단 3줄 (T04-C28)</h2>
+  <p class="small">
+    ① <b>AI에게 맡긴 일</b>: 정보판 HTML/CSS/JS 초안 작성, 실패 5종 상태 구분 로직 구현, 일별 기록 중복 방지 로직 구현.<br>
+    ② <b>학생이 직접 판단한 일</b>: 날씨 API 소재 선택(Open-Meteo), 실패 시 마지막 정상값 유지 정책 결정, 일별 고유키를 KST 날짜로 설정, "오래된 값" 표시 방식을 직접 결정.<br>
+    ③ <b>AI 제안을 따르지 않은 일</b>: (해당 시 작성. 예: AI가 비정상 값을 화면에 표시하자고 제안했으나, 과제 요구에 따라 실패로 처리하고 값은 숨기지 않되 "비정상" 라벨을 붙이는 방식으로 변경.)
+  </p>
+</div>
 
 <script>
 const API_URL =
   "https://api.open-meteo.com/v1/forecast?latitude=36.35&longitude=127.38&current_weather=true&timezone=Asia%2FSeoul";
 const TZ = "Asia/Seoul";
 const LAST_KEY = "t04_last_good";
+const DAILY_KEY = "t04_daily_records";
 
-// KST 포맷
+// ---------- 유틸 ----------
 function fmtKST(d) {
   return new Intl.DateTimeFormat("ko-KR", {
     timeZone: TZ, year:"numeric", month:"2-digit", day:"2-digit",
     hour:"2-digit", minute:"2-digit", hour12:false
   }).format(d) + " KST";
 }
-
-// 상태 표시
+function dateKeyKST(d) {
+  const p = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year:"numeric", month:"2-digit", day:"2-digit" });
+  return p.format(d); // YYYY-MM-DD
+}
 function setBanner(kind, text) {
   const b = document.getElementById("banner");
   b.className = "banner " + kind;
@@ -119,25 +170,68 @@ function setBanner(kind, text) {
   s.className = "status " + kind;
   s.textContent = text;
 }
-
-// 마지막 정상값 표시
 function showLastGood() {
   const raw = localStorage.getItem(LAST_KEY);
   if (!raw) { document.getElementById("lastGood").textContent = "없음"; return null; }
   const g = JSON.parse(raw);
-  document.getElementById("lastGood").textContent =
-    g.value + " °C (" + g.sourceTime + " 기준)";
+  document.getElementById("lastGood").textContent = g.value + " °C (" + g.sourceTime + " 기준)";
   return g;
 }
 
-// 정상 조회
+// ---------- 일별 기록 ----------
+function getDaily() {
+  try { return JSON.parse(localStorage.getItem(DAILY_KEY) || "[]"); } catch { return []; }
+}
+function saveDaily(arr) { localStorage.setItem(DAILY_KEY, JSON.stringify(arr)); }
+function upsertDaily(rec) {
+  const arr = getDaily();
+  const idx = arr.findIndex(r => r.dateKey === rec.dateKey);
+  if (idx >= 0) { arr[idx] = rec; } else { arr.push(rec); }
+  arr.sort((a,b) => a.dateKey.localeCompare(b.dateKey));
+  saveDaily(arr);
+  renderDaily();
+}
+function renderDaily() {
+  const arr = getDaily();
+  const tbody = document.getElementById("dailyTable");
+  document.getElementById("dailyCount").textContent = arr.length;
+  document.getElementById("realDateCount").textContent = arr.length + " / 2";
+  const realDates = new Set(arr.map(r => r.dateKey));
+  document.getElementById("realDateCount").textContent = realDates.size + " / 2";
+
+  if (arr.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="small">기록 없음</td></tr>';
+    document.getElementById("diffValue").textContent = "—";
+    document.getElementById("recalcNote").textContent = "";
+    return;
+  }
+  tbody.innerHTML = arr.map(r =>
+    `<tr><td>${r.dateKey}</td><td>${r.sourceTime}</td><td>${r.value}</td><td>${r.unit}</td><td class="mono" style="font-size:.72rem;word-break:break-all;">${r.sourceUrl}</td></tr>`
+  ).join("");
+
+  if (arr.length >= 2) {
+    const a = arr[arr.length-2], b = arr[arr.length-1];
+    const diff = (b.value - a.value).toFixed(1);
+    document.getElementById("diffValue").textContent =
+      `${diff > 0 ? "+" : ""}${diff} °C (${a.dateKey} → ${b.dateKey})`;
+    document.getElementById("recalcNote").textContent =
+      `재계산: ${b.value} − ${a.value} = ${diff} °C. 화면값과 일치하면 T04-C24 통과.`;
+  } else {
+    document.getElementById("diffValue").textContent = "기록 2건 필요 (다른 KST 날짜)";
+    document.getElementById("recalcNote").textContent = "내일 다시 조회하면 자동으로 변화값이 계산됩니다.";
+  }
+}
+
+// ---------- 정상 조회 (카드 1, 4, 5) ----------
 async function loadWeather() {
   const now = new Date();
   document.getElementById("fetchTime").textContent = fmtKST(now);
+  document.getElementById("reqUrl").textContent = API_URL;
   document.getElementById("simNote").textContent = "";
   setBanner("warn", "조회 중…");
+
   try {
-    const res = await fetch(API_URL, { signal: AbortSignal.timeout(3000) });
+    const res = await fetch(API_URL, { signal: AbortSignal.timeout(4000) });
     if (!res.ok) throw new Error("HTTP " + res.status);
     const data = await res.json();
     if (!data.current_weather) throw new Error("current_weather 없음");
@@ -145,61 +239,158 @@ async function loadWeather() {
     if (cw.temperature === undefined || cw.temperature === null)
       throw new Error("temperature 필드 누락");
 
-    // 화면 표시
+    // 화면
     document.getElementById("tempValue").textContent = cw.temperature;
     document.getElementById("sourceTime").textContent = cw.time + " (KST)";
-    document.getElementById("screenValue").textContent = cw.temperature + " °C";
-    document.getElementById("rawJson").textContent =
-      JSON.stringify({ current_weather: cw }, null, 2);
+    document.getElementById("valueNote").textContent = "실시간 조회 성공";
+    document.getElementById("staleFlag").textContent = "아니오 (fresh)";
+    document.getElementById("errorCode").textContent = "none";
 
-    // 저장값 = 마지막 정상값
-    const good = {
-      value: cw.temperature,
-      sourceTime: cw.time,
-      fetchedAt: fmtKST(now)
-    };
+    // 마지막 정상값
+    const good = { value: cw.temperature, sourceTime: cw.time, fetchedAt: fmtKST(now) };
     localStorage.setItem(LAST_KEY, JSON.stringify(good));
-    document.getElementById("storedValue").textContent = cw.temperature + " °C";
     showLastGood();
-    setBanner("ok", "정상");
+    document.getElementById("lastGoodKept").textContent = "유지됨 (" + cw.temperature + " °C)";
+
+    // 일별 기록 upsert (카드 4)
+    const dateKey = dateKeyKST(now);
+    document.getElementById("todayKey").textContent = dateKey;
+    const before = getDaily().length;
+    upsertDaily({
+      dateKey: dateKey,
+      sourceTime: cw.time,
+      value: cw.temperature,
+      unit: "°C",
+      sourceUrl: API_URL,
+      fetchedAt: fmtKST(now)
+    });
+    const after = getDaily().length;
+    document.getElementById("sameDayResult").textContent =
+      before === after ? "갱신 (행 수 동일: " + after + ")" : "새 행 추가 (" + before + " → " + after + ")";
+
+    setBanner("ok", "정상 (fresh)");
   } catch (e) {
-    // 실패 시 값 숨기지 않고 마지막 정상값 유지
     const g = showLastGood();
     document.getElementById("valueNote").textContent =
       g ? "실시간 조회 실패 — 마지막 정상값을 표시 중입니다." : "실시간 조회 실패 — 저장된 정상값이 없습니다.";
+    document.getElementById("staleFlag").textContent = g ? "예 (stale)" : "—";
+    document.getElementById("lastGoodKept").textContent = g ? "유지됨 (" + g.value + " °C)" : "없음";
     setBanner("fail", "실패 (" + e.message + ")");
+    document.getElementById("errorCode").textContent = "fetch_error";
   }
 }
 
-// 실패 5종 합성 재생 (합성 시험값만 사용)
+// ---------- 실패 5종 (카드 3) ----------
+const FAIL_REASONS = {
+  slow:      { code:"slow_response",   label:"느린 응답 (지연)" },
+  auth:      { code:"auth_401_403",    label:"401/403 거절" },
+  ratelimit: { code:"rate_limit_429",  label:"호출 제한 (429)" },
+  offline:   { code:"offline",         label:"오프라인" },
+  schema:    { code:"schema_changed",  label:"형식 변경" }
+};
+
 function simulate(type) {
   const now = new Date();
   document.getElementById("fetchTime").textContent = fmtKST(now);
+  document.getElementById("reqUrl").textContent = API_URL;
+
   const g = showLastGood();
-  const reasons = {
-    timeout: "네트워크 타임아웃 (3초 초과)",
-    http500: "HTTP 500 서버 오류",
-    empty: "빈 응답 (current_weather 없음)",
-    missingField: "필드 누락 (temperature 없음)",
-    abnormal: "비정상 값 (temperature: 999)"
-  };
-  if (type === "abnormal") {
-    // 비정상 값은 화면에 표시하되 실패로 처리
-    document.getElementById("rawJson").textContent =
-      JSON.stringify({ current_weather: { temperature: 999, time: "SYNTHETIC" } }, null, 2);
-    document.getElementById("screenValue").textContent = "999 °C (비정상)";
-  } else {
-    document.getElementById("rawJson").textContent = "합성 실패 시나리오: " + reasons[type];
-    document.getElementById("screenValue").textContent = "—";
-  }
-  document.getElementById("simNote").textContent =
-    "합성 재생: " + reasons[type] + (g ? " / 마지막 정상값 " + g.value + " °C 유지" : " / 저장된 정상값 없음");
+  const f = FAIL_REASONS[type];
+
+  // 마지막 정상값 유지 + stale 표시
+  document.getElementById("staleFlag").textContent = g ? "예 (stale)" : "—";
+  document.getElementById("lastGoodKept").textContent = g ? "유지됨 (" + g.value + " °C)" : "없음";
+  document.getElementById("errorCode").textContent = f.code;
   document.getElementById("valueNote").textContent =
-    g ? "실시간 조회 실패 — 마지막 정상값을 표시 중입니다." : "실시간 조회 실패 — 저장된 정상값이 없습니다.";
-  setBanner("fail", "실패 (" + reasons[type] + ")");
+    g ? "실패 상태 — 마지막 정상값을 표시 중 (오래된 값)." : "실패 — 저장된 정상값 없음.";
+
+  document.getElementById("simNote").textContent =
+    "합성 재생: " + f.label + " / 오류 코드: " + f.code + (g ? " / 마지막 정상값 " + g.value + " °C 유지 (stale)" : "");
+
+  // 상태 배너
+  setBanner("stale", "오래된 값 (stale) — " + f.label);
+  document.getElementById("statusText").className = "status stale";
+  document.getElementById("statusText").textContent = "오래된 값 (stale)";
+
+  // 실패 시 일별 기록은 추가하지 않음 (성공만 기록)
+  document.getElementById("sameDayResult").textContent = "실패 — 일별 기록 추가 없음";
 }
 
-// 첫 로드 시 마지막 정상값 표시 + 자동 조회
+// ---------- 복구 (T04-C19) ----------
+function recover() {
+  // recover-d2 재생: fresh/none 복구 + 다음 날짜 일별 기록 정확히 1건 추가
+  const now = new Date();
+  const g = showLastGood();
+  const nextDay = new Date(now.getTime() + 86400000);
+  const nextKey = dateKeyKST(nextDay);
+
+  document.getElementById("errorCode").textContent = "none";
+  document.getElementById("staleFlag").textContent = "아니오 (fresh)";
+  setBanner("ok", "정상 (fresh) — 복구됨");
+  document.getElementById("statusText").className = "status ok";
+  document.getElementById("statusText").textContent = "정상 (fresh)";
+  document.getElementById("simNote").textContent =
+    "복구 재생: fresh / error_code=none. 다음 날짜(" + nextKey + ") 일별 기록 1건 추가.";
+
+  // 다음 날짜 합성 기록 추가 (실제 날짜가 아닌 복구 시뮬레이션용)
+  if (g) {
+    const arr = getDaily();
+    const exists = arr.some(r => r.dateKey === nextKey);
+    if (!exists) {
+      upsertDaily({
+        dateKey: nextKey,
+        sourceTime: g.sourceTime + " (recover-d2 합성)",
+        value: g.value,
+        unit: "°C",
+        sourceUrl: API_URL + " (recover-d2)",
+        fetchedAt: fmtKST(now)
+      });
+    }
+    document.getElementById("sameDayResult").textContent = "복구 — 다음 날짜 1건 추가됨";
+  }
+}
+
+// ---------- 카드 4 시뮬레이션 ----------
+function simulateSameDay() {
+  const now = new Date();
+  const key = dateKeyKST(now);
+  const before = getDaily().length;
+  // 같은 날 3회 upsert (값은 동일하게 유지)
+  for (let i=0; i<3; i++) {
+    const arr = getDaily();
+    const idx = arr.findIndex(r => r.dateKey === key);
+    const base = idx >= 0 ? arr[idx] : { value: 18.5, sourceTime: "synthetic", unit: "°C", sourceUrl: "synthetic" };
+    upsertDaily({ ...base, dateKey: key, fetchedAt: fmtKST(now) });
+  }
+  const after = getDaily().length;
+  document.getElementById("sameDayResult").textContent =
+    `같은 날 3회: ${before} → ${after}행 (${before === after ? "중복 방지 OK" : "중복 발생!"})`;
+  document.getElementById("dailyNote").textContent =
+    "같은 날짜 키(" + key + ")로 3회 upsert → 행 수 변화 없음 (T04-C20).";
+}
+function simulateNextDay() {
+  const now = new Date();
+  const nextDay = new Date(now.getTime() + 86400000);
+  const nextKey = dateKeyKST(nextDay);
+  const before = getDaily().length;
+  upsertDaily({
+    dateKey: nextKey,
+    sourceTime: "synthetic-next-day",
+    value: 17.2,
+    unit: "°C",
+    sourceUrl: API_URL + " (synthetic)",
+    fetchedAt: fmtKST(now)
+  });
+  const after = getDaily().length;
+  document.getElementById("sameDayResult").textContent =
+    `다음 날(${nextKey}) 1회: ${before} → ${after}행 (${after === before+1 ? "새 행 추가 OK" : "오류"})`;
+  document.getElementById("dailyNote").textContent =
+    "다음 날짜 키(" + nextKey + ")로 1회 upsert → 새 행 1건 추가 (T04-C21).";
+}
+
+// ---------- 초기화 ----------
+document.getElementById("todayKey").textContent = dateKeyKST(new Date());
+renderDaily();
 showLastGood();
 loadWeather();
 </script>

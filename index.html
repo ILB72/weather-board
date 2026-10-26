@@ -146,7 +146,7 @@
   <p class="small">
     ① <b>AI에게 맡긴 일</b>: 정보판 HTML/CSS/JS 초안, 9개 필드 정규화 검증, 실패 5종 상태 매핑, record_id 기반 upsert 로직, LIVE/SYNTHETIC 분리 집계 구현.<br>
     ② <b>학생이 직접 판단한 일</b>: Open-Meteo 소재 선택, 실패 시 마지막 정상값 유지 정책, delta를 magnitude(절대값)로 표시하기로 결정, stale 라벨 표시 방식, 라이브 기록만 이틀 비교에 쓰기로 결정.<br>
-    ③ <b>AI 제안을 따르지 않은 일</b>: (작성 필요. 예: AI가 실패 시 값을 숨기자고 제안했으나, 과제 요구에 따라 마지막 정상값을 유지하고 stale 표시를 붙이는 방식으로 변경.)
+    ③ <b>AI 제안을 따르지 않은 일</b>: AI가 어제 대비 변화를 부호 있는 값(+15/−15)으로 표시하는 방식을 제안했으나, 참조 구현(adapter-reset.example.js)의 comparisonFor()가 magnitude(절대값)를 쓰는 것을 확인하고 절대값 표시로 바꿨습니다.
   </p>
 </div>
 
